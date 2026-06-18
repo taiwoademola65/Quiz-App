@@ -26,13 +26,15 @@
 
         <div>
           <button id="startBtn" class="btn btn-success btn-md w-100" onclick='startTest()'>Start Test</button>
-          <button id="endBtn" class="btn btn-success btn-md w-100" style="display: none;" onclick='endBtn()'>End Test</button>
+          <button id="endBtn" class="btn btn-success btn-md w-100" style="display: none;" onclick='endBtn()'>End
+            Test</button>
         </div>
+
         <div id="btn" style="display: none;">
           <button id="prev-btn" class="btn btn-success btn-md w-100 me-2" onclick='prev()'>Prev</button>
           <button id="next-btn" class="btn btn-success btn-md w-100" onclick='next()'>Next</button>
         </div>
-       
+
 
       </div>
     </div>
@@ -77,13 +79,9 @@
       // console.log(questionDisplay);
 
       for (let i = 0; i < quizData.length; i++) {
-        // let optionDisplay = document.getElementById('choices-container');
-        // let nextButton = document.getElementById('next-btn')
-        // const element = array[index];
         if (quizData[i].num == currentQuestionIndex) {
           // console.log(quizData[i].question);
 
-          // questionDisplay = `<p>${quizData[i].question}</p>`
           document.getElementById('choices-container').style.display = 'flex'
           questionDisplay.innerText = `${quizData[i].question}`
           option1Display.innerHTML = ` ${quizData[i].options[0]}`
@@ -92,24 +90,17 @@
           option4Display.innerHTML = `${quizData[i].options[3]}`
           correctAnser = quizData[i].correct
           // console.log(document.getElementById('option1').innerHTML);
-          // if(option1Display.innerHTML == quizData[i].correct){
-
           // }
-          // document.getElementById('question-text').innerHTML = `<p> ${quizData[i].question}</p>`
-          if(quizData[i].num != quizData.length){
+          if (quizData[i].num != quizData.length) {
             document.getElementById('startBtn').style.display = 'none'
             document.getElementById('btn').style.display = 'flex'
-          }else{
-             document.getElementById('startBtn').style.display = 'none'
-             document.getElementById('endBtn').style.display = 'block'
+          } else {
+            document.getElementById('startBtn').style.display = 'none'
+            document.getElementById('endBtn').style.display = 'block'
             document.getElementById('btn').style.display = 'none'
           }
 
-          // currentQuestionIndex++
         }
-
-        
-
 
       }
 
@@ -127,41 +118,49 @@
     }
 
     const next = () => {
-      startTest()
+      startTest();
     }
 
     const endBtn = () => {
-      // document.getElementById('table').style.display = 'block'
       container = document.getElementById('container')
-      container.innerHTML =`<h1> Congratulations on completing the test. Your score is ${score}</h1>`
-      
+      let htmlContent =`<h1 class="text-success"> Congratulations on completing the test. Your score is ${score}</h1> 
+      <br>
 
-      for(let i = 0; i < quizData.length; i++){
-        container.innerHTML += `
-
-          <table class='table'>
+       <table class="table">
           <tr>
             <th>S/N</th>
             <th>Question</th>
             <th>Correct Answer</th>
           </tr>
+     
+      `
+
+      
+
+      for (let i = 0; i < quizData.length; i++) {
+        htmlContent += `         
           <tr>
-            <td id="s/n" scope='row'></td>
+            <td id="s/n" scope='row'>${quizData[i].num}</td>
             <td id="showQuestion" scope='row'> ${quizData[i].question}</td>
             <td id="showAnswer" scope='row'> ${quizData[i].correct}</td>
-          </tr>
-        </table>
-      
-        
-        `
-      
+          </tr>`
+
         // document.getElementById('s/n').innerText += `${i + 1}`
         // document.getElementById('showQuestion').innerText += `${quizData[i].question}`
         // document.getElementById('showAnswer').innerText += `${quizData[i].correct}`
 
       }
-      
+
+  htmlContent += `
+    
+    </table>
+  `;
+
+  container.innerHTML = htmlContent;
+
+
     }
+
 
   </script>
 
