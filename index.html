@@ -11,25 +11,28 @@
 <body>
   <div class="container h-75 mt-5" style="max-width: 600px;">
     <div class="card shadow-sm">
-      <div class="card-body p-4">
+      <div class="card-body p-4" id="container">
 
         <h3 id="question-text" class="card-title mb-4 text-center text-dark">
           Question text will go here...
         </h3>
 
         <div id="choices-container" class="gap-2 mb-4" style="display: none;">
-          <button class="btn btn-primary" id="option1" onclick="this.setAttribute('value', 'clicked')"></button>
-          <button class="btn btn-primary" id="option2" onclick="this.setAttribute('value', 'clicked')"></button>
-          <button class="btn btn-primary" id="option3" onclick="this.setAttribute('value', 'clicked')"></button>
-          <button class="btn btn-primary" id="option4" onclick="this.setAttribute('value', 'clicked')"></button>
+          <button class="btn btn-primary" id="option1" onclick="getOption(this)"></button>
+          <button class="btn btn-primary" id="option2" onclick="getOption(this)"></button>
+          <button class="btn btn-primary" id="option3" onclick="getOption(this)"></button>
+          <button class="btn btn-primary" id="option4" onclick="getOption(this)"></button>
         </div>
 
-        <div class="d-grid">
-          <button id="next-btn" class="btn btn-success btn-md" onclick='startTest()'>Start Test</button>
+        <div>
+          <button id="startBtn" class="btn btn-success btn-md w-100" onclick='startTest()'>Start Test</button>
+          <button id="endBtn" class="btn btn-success btn-md w-100" style="display: none;" onclick='endBtn()'>End Test</button>
         </div>
-        <div id="btn">
-          
+        <div id="btn" style="display: none;">
+          <button id="prev-btn" class="btn btn-success btn-md w-100 me-2" onclick='prev()'>Prev</button>
+          <button id="next-btn" class="btn btn-success btn-md w-100" onclick='next()'>Next</button>
         </div>
+       
 
       </div>
     </div>
@@ -56,47 +59,110 @@
         num: 3,
         question: "Which HTML element is used for JavaScript?",
         options: ["scripting", "js", "script", "javascript"],
-        correct: "<script>"
+        correct: "script"
       }
     ];
     let currentQuestionIndex = 1;
+    score = 0
+    let correctAnser;
 
     const startTest = () => {
-      // let questionDisplay = document.getElementById('question-text').innerHTML;
-      // let optionDisplay = document.getElementById('choices-container');
-      // let nextButton = document.getElementById('next-btn')
 
       // optionDisplay.innerHTML = '';
+      let questionDisplay = document.getElementById('question-text');
+      let option1Display = document.getElementById('option1')
+      let option2Display = document.getElementById('option2')
+      let option3Display = document.getElementById('option3')
+      let option4Display = document.getElementById('option4')
+      // console.log(questionDisplay);
+
       for (let i = 0; i < quizData.length; i++) {
+        // let optionDisplay = document.getElementById('choices-container');
+        // let nextButton = document.getElementById('next-btn')
         // const element = array[index];
         if (quizData[i].num == currentQuestionIndex) {
           // console.log(quizData[i].question);
 
           // questionDisplay = `<p>${quizData[i].question}</p>`
           document.getElementById('choices-container').style.display = 'flex'
+          questionDisplay.innerText = `${quizData[i].question}`
+          option1Display.innerHTML = ` ${quizData[i].options[0]}`
+          option2Display.innerHTML = `${quizData[i].options[1]}`
+          option3Display.innerHTML = `${quizData[i].options[2]}`
+          option4Display.innerHTML = `${quizData[i].options[3]}`
+          correctAnser = quizData[i].correct
+          // console.log(document.getElementById('option1').innerHTML);
+          // if(option1Display.innerHTML == quizData[i].correct){
 
-          document.getElementById('question-text').innerHTML = `<p> ${quizData[i].question}</p>`
-          document.getElementById('option1').innerHTML = ` ${quizData[i].options[0]}`
-          document.getElementById('option2').innerHTML = `${quizData[i].options[1]}`
-          document.getElementById('option3').innerHTML = `${quizData[i].options[2]}`
-          document.getElementById('option4').innerHTML = `${quizData[i].options[3]}`
+          // }
           // document.getElementById('question-text').innerHTML = `<p> ${quizData[i].question}</p>`
+          if(quizData[i].num != quizData.length){
+            document.getElementById('startBtn').style.display = 'none'
+            document.getElementById('btn').style.display = 'flex'
+          }else{
+             document.getElementById('startBtn').style.display = 'none'
+             document.getElementById('endBtn').style.display = 'block'
+            document.getElementById('btn').style.display = 'none'
+          }
+
+          // currentQuestionIndex++
         }
-        
-        
-      }
-      // questionDisplay.innerHTML = ``
 
-      checkCorrect(){
-        document.getElementById()
-      }
-
-      const incorrect = () => {
-        console.log(0);
         
+
+
       }
 
     }
+
+
+    const getOption = (clickedBtn) => {
+      let selectedOption = clickedBtn.innerText
+      // console.log(selectedOption);
+      if (selectedOption == correctAnser) {
+        score++
+        console.log(score);
+      }
+      currentQuestionIndex += 1
+    }
+
+    const next = () => {
+      startTest()
+    }
+
+    const endBtn = () => {
+      // document.getElementById('table').style.display = 'block'
+      container = document.getElementById('container')
+      container.innerHTML =`<h1> Congratulations on completing the test. Your score is ${score}</h1>`
+      
+
+      for(let i = 0; i < quizData.length; i++){
+        container.innerHTML += `
+
+          <table class='table'>
+          <tr>
+            <th>S/N</th>
+            <th>Question</th>
+            <th>Correct Answer</th>
+          </tr>
+          <tr>
+            <td id="s/n" scope='row'></td>
+            <td id="showQuestion" scope='row'> ${quizData[i].question}</td>
+            <td id="showAnswer" scope='row'> ${quizData[i].correct}</td>
+          </tr>
+        </table>
+      
+        
+        `
+      
+        // document.getElementById('s/n').innerText += `${i + 1}`
+        // document.getElementById('showQuestion').innerText += `${quizData[i].question}`
+        // document.getElementById('showAnswer').innerText += `${quizData[i].correct}`
+
+      }
+      
+    }
+
   </script>
 
 </body>
