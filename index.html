@@ -17,11 +17,18 @@
           Question text will go here...
         </h3>
 
-        <div id="choices-container" class="d-grid gap-2 mb-4">
+        <div id="choices-container" class="gap-2 mb-4" style="display: none;">
+          <button class="btn btn-primary" id="option1" onclick="this.setAttribute('value', 'clicked')"></button>
+          <button class="btn btn-primary" id="option2" onclick="this.setAttribute('value', 'clicked')"></button>
+          <button class="btn btn-primary" id="option3" onclick="this.setAttribute('value', 'clicked')"></button>
+          <button class="btn btn-primary" id="option4" onclick="this.setAttribute('value', 'clicked')"></button>
         </div>
 
         <div class="d-grid">
-          <button id="next-btn" class="btn btn-success btn-md">Next Question</button>
+          <button id="next-btn" class="btn btn-success btn-md" onclick='startTest()'>Start Test</button>
+        </div>
+        <div id="btn">
+          
         </div>
 
       </div>
@@ -33,53 +40,63 @@
   <script>
     const quizData = [
       {
+        num: 1,
         question: 'Which language runs in a web browser?',
         options: ["Java", "C", "Python", "javaScript"],
         correct: 'javaScript'
       },
       {
+        num: 2,
         question: 'What does CSS stand for?',
         options: ["Central Style Sheets", "Cascading Style Sheets", "Cascading Simple Sheets", "Cars SUVs Sailboats"],
         correct: "Cascading Style Sheets"
       },
 
       {
+        num: 3,
         question: "Which HTML element is used for JavaScript?",
-        options: ["<scripting>", "<js>", "<script>", "<javascript>"],
+        options: ["scripting", "js", "script", "javascript"],
         correct: "<script>"
       }
-
     ];
-    let currentQuestionIndex = 0;
-    
-   const loadQuestion = () => {
-  let questionDisplay = document.getElementById('question-text');
-  let optionDisplay = document.getElementById('choices-container');
+    let currentQuestionIndex = 1;
 
-  optionDisplay.innerHTML = '';
+    const startTest = () => {
+      // let questionDisplay = document.getElementById('question-text').innerHTML;
+      // let optionDisplay = document.getElementById('choices-container');
+      // let nextButton = document.getElementById('next-btn')
 
-  let currentQuiz = quizData[currentQuestionIndex];
-  questionDisplay.textContent = currentQuiz.question;
-  
-  // ─── FIXED THIS LINE BELOW ───
-  for (let i = 0; i < currentQuiz.options.length; i++) { 
-    const button = document.createElement("button");
-    button.textContent = currentQuiz.options[i];
-    button.className = "btn btn-outline-dark text-start p-2"; 
-    
-    button.addEventListener("click", function() {
-        if (button.textContent === currentQuiz.correct) {
-            alert("Correct! 🎉");
-        } else {
-            alert("Wrong! ❌");
+      // optionDisplay.innerHTML = '';
+      for (let i = 0; i < quizData.length; i++) {
+        // const element = array[index];
+        if (quizData[i].num == currentQuestionIndex) {
+          // console.log(quizData[i].question);
+
+          // questionDisplay = `<p>${quizData[i].question}</p>`
+          document.getElementById('choices-container').style.display = 'flex'
+
+          document.getElementById('question-text').innerHTML = `<p> ${quizData[i].question}</p>`
+          document.getElementById('option1').innerHTML = ` ${quizData[i].options[0]}`
+          document.getElementById('option2').innerHTML = `${quizData[i].options[1]}`
+          document.getElementById('option3').innerHTML = `${quizData[i].options[2]}`
+          document.getElementById('option4').innerHTML = `${quizData[i].options[3]}`
+          // document.getElementById('question-text').innerHTML = `<p> ${quizData[i].question}</p>`
         }
-    });
+        
+        
+      }
+      // questionDisplay.innerHTML = ``
 
-    optionDisplay.appendChild(button);
-  }
-}
+      checkCorrect(){
+        document.getElementById()
+      }
 
-loadQuestion();
+      const incorrect = () => {
+        console.log(0);
+        
+      }
+
+    }
   </script>
 
 </body>

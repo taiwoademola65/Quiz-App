@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JS Quiz App</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body class="bg-light min-vh-100 d-flex align-items-center justify-content-center py-4">
+
+<div class="card shadow-sm border-0 rounded-4 p-4" style="max-width: 620px; width: 100%;">
+
+  <!-- QUIZ SCREEN -->
+  <div id="quiz-main">
+
+    <!-- Header: question counter + score -->
+    <div class="d-flex justify-content-between mb-1">
+      <small class="text-muted fw-semibold" id="q-counter">Question 1 of 10</small>
+      <small class="text-muted fw-semibold" id="score-display">Score: 0</small>
+    </div>
+
+    <!-- Progress bar -->
+    <div class="progress mb-4" style="height: 6px;">
+      <div class="progress-bar bg-primary" id="progress" style="width: 0%; transition: width 0.4s ease;"></div>
+    </div>
+
+    <!-- Topic badge -->
+    <span class="badge bg-primary bg-opacity-10 text-primary text-uppercase mb-3 px-3 py-2 rounded-pill fw-semibold" id="topic-badge">Arrays</span>
+
+    <!-- Question -->
+    <p class="fs-5 fw-semibold text-dark mb-4" id="question-text"></p>
+
+    <!-- Answer buttons -->
+    <div class="d-grid gap-2" id="options-container"></div>
+
+    <!-- Feedback -->
+    <p class="mt-3 mb-1 fw-semibold small" id="feedback"></p>
+
+    <!-- Code hint -->
+    <div class="alert alert-secondary border-start border-primary border-3 rounded-2 small font-monospace py-2 mb-3" id="code-hint" style="display:none;"></div>
+
+    <!-- Next button -->
+    <button class="btn btn-primary px-4 mt-1" id="next-btn" style="display:none;">Next question →</button>
+
+  </div>
+
+  <!-- RESULT SCREEN -->
+  <div id="result-card" class="text-center" style="display:none;">
+
+    <p class="text-uppercase text-muted fw-semibold small mb-2">Your result</p>
+
+    <!-- Score ring -->
+    <div class="rounded-circle bg-primary bg-opacity-10 d-flex flex-column align-items-center justify-content-center mx-auto mb-3" style="width:110px; height:110px;">
+      <span class="fs-2 fw-bold text-primary lh-1" id="result-score"></span>
+      <small class="text-primary fw-semibold">correct</small>
+    </div>
+
+    <p class="fs-5 fw-semibold text-primary mb-1" id="result-pct"></p>
+    <p class="text-muted mb-4" id="result-msg"></p>
+
+    <button class="btn btn-outline-primary px-4" id="restart-btn">Try again</button>
+
+    <!-- Review list -->
+    <div id="review-list" class="text-start mt-4"></div>
+
+  </div>
+
+</div>
+
+<script>
+  // ─── DATA ────────────────────────────────────────────────────────────────────
+  const questions = [
+    {
+      q: "Which method adds an element to the END of an array?",
+      options: ["push()", "pop()", "shift()", "unshift()"],
+      answer: 0,
+      topic: "Arrays",
+      hint: "array.push(item) — adds to end, returns new length"
+    },
+    {
+      q: "What does array.length return for [ 'a', 'b', 'c' ]?",
+      options: ["2", "3", "4", "undefined"],
+      answer: 1,
+      topic: "Arrays",
+      hint: "array.length counts all elements: ['a','b','c'].length === 3"
+    },
+    {
+      q: "Which loop runs at least once before checking its condition?",
+      options: ["for loop", "while loop", "do...while loop", "for...of loop"],
+      answer: 2,
+      topic: "Loops",
+      hint: "do { ... } while (condition) — body runs first, condition checked after"
+    },
+    {
+      q: "What is the index of the FIRST element in a JavaScript array?",
+      options: ["1", "-1", "0", "undefined"],
+      answer: 2,
+      topic: "Arrays",
+      hint: "JS arrays are zero-indexed: arr[0] is the first element"
+    },
+    {
+      q: "Which keyword correctly starts a conditional check?",
+      options: ["when", "if", "check", "is"],
+      answer: 1,
+      topic: "Conditionals",
+      hint: "if (condition) { ... } else if (...) { ... } else { ... }"
+    },
+    {
+      q: "What does array.pop() do?",
+      options: ["Adds to the front", "Removes from the front", "Removes from the end", "Adds to the end"],
+      answer: 2,
+      topic: "Arrays",
+      hint: "pop() removes and returns the LAST element — opposite of push()"
+    },
+    {
+      q: "What is the output of: for (let i = 0; i < 3; i++) { console.log(i) }",
+      options: ["1, 2, 3", "0, 1, 2", "0, 1, 2, 3", "1, 2"],
+      answer: 1,
+      topic: "Loops",
+      hint: "Loop starts at 0, runs while i < 3 (not <=), so: 0, 1, 2"
+    },
+    {
+      q: "Which operator checks both value AND type?",
+      options: ["==", "=", "===", "!="],
+      answer: 2,
+      topic: "Conditionals",
+      hint: "=== is strict equality. '3' == 3 is true, but '3' === 3 is false"
+    },
+    {
+      q: "How do you loop through every item in an array called 'fruits'?",
+      options: [
+        "for (item in fruits)",
+        "for (let fruit of fruits)",
+        "while (fruits.length)",
+        "loop fruits"
+      ],
+      answer: 1,
+      topic: "Loops",
+      hint: "for...of iterates VALUES. for...in iterates KEYS/indices"
+    },
+    {
+      q: "What does array.indexOf('banana') return if 'banana' is NOT in the array?",
+      options: ["0", "null", "false", "-1"],
+      answer: 3,
+      topic: "Arrays",
+      hint: "indexOf returns -1 when the element isn't found — a common JS convention"
+    }
+  ];
+
+  const letters = ['A', 'B', 'C', 'D'];
+
+  // ─── STATE ───────────────────────────────────────────────────────────────────
+  let shuffled = [];
+  let currentIndex = 0;
+  let score = 0;
+  let answered = false;
+  let userAnswers = [];
+
+  // ─── SHUFFLE (Fisher-Yates) ───────────────────────────────────────────────────
+  function shuffle(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
+  // ─── LOAD QUESTION ───────────────────────────────────────────────────────────
+  function loadQuestion() {
+    answered = false;
+    const q = shuffled[currentIndex];
+    const total = shuffled.length;
+
+    // Progress bar
+    document.getElementById('progress').style.width = (currentIndex / total * 100) + '%';
+
+    // Counters
+    document.getElementById('q-counter').textContent = 'Question ' + (currentIndex + 1) + ' of ' + total;
+    document.getElementById('score-display').textContent = 'Score: ' + score;
+
+    // Question content
+    document.getElementById('topic-badge').textContent = q.topic;
+    document.getElementById('question-text').textContent = q.q;
+
+    // Reset feedback & hint
+    document.getElementById('feedback').textContent = '';
+    document.getElementById('feedback').className = 'mt-3 mb-1 fw-semibold small';
+    document.getElementById('code-hint').style.display = 'none';
+    document.getElementById('next-btn').style.display = 'none';
+
+    // Build answer buttons with forEach
+    const container = document.getElementById('options-container');
+    container.innerHTML = '';
+
+    q.options.forEach(function(option, i) {
+      const btn = document.createElement('button');
+      btn.className = 'btn btn-outline-secondary text-start d-flex align-items-center gap-2 rounded-3 py-2 px-3';
+      btn.innerHTML =
+        '<span class="badge bg-secondary bg-opacity-25 text-secondary rounded-circle fw-bold">' + letters[i] + '</span>' +
+        '<span>' + option + '</span>';
+      btn.onclick = function() { selectAnswer(i); };
+      container.appendChild(btn);
+    });
+  }
+
+  // ─── SELECT ANSWER ────────────────────────────────────────────────────────────
+  function selectAnswer(chosen) {
+    if (answered) return;
+    answered = true;
+
+    const q = shuffled[currentIndex];
+    const buttons = document.querySelectorAll('#options-container .btn');
+    const feedback = document.getElementById('feedback');
+    const hint = document.getElementById('code-hint');
+
+    // Disable all buttons
+    buttons.forEach(function(btn) { btn.disabled = true; });
+
+    // Conditional: correct or wrong
+    if (chosen === q.answer) {
+      buttons[chosen].classList.remove('btn-outline-secondary');
+      buttons[chosen].classList.add('btn-success');
+      feedback.textContent = '✓ Correct!';
+      feedback.classList.add('text-success');
+      score++;
+    } else {
+      buttons[chosen].classList.remove('btn-outline-secondary');
+      buttons[chosen].classList.add('btn-danger');
+      buttons[q.answer].classList.remove('btn-outline-secondary');
+      buttons[q.answer].classList.add('btn-success');
+      feedback.textContent = '✗ Not quite — the correct answer is ' + letters[q.answer] + '.';
+      feedback.classList.add('text-danger');
+    }
+
+    // Show hint
+    hint.textContent = '💡 ' + q.hint;
+    hint.style.display = 'block';
+
+    // Save for review
+    userAnswers.push({
+      q: q.q,
+      topic: q.topic,
+      chosen: chosen,
+      correct: q.answer,
+      options: q.options
+    });
+
+    // Show next button
+    const nextBtn = document.getElementById('next-btn');
+    nextBtn.style.display = 'inline-block';
+    nextBtn.textContent = currentIndex < shuffled.length - 1 ? 'Next question →' : 'See results →';
+  }
+
+  // ─── NEXT QUESTION ────────────────────────────────────────────────────────────
+  document.getElementById('next-btn').onclick = function() {
+    currentIndex++;
+    if (currentIndex < shuffled.length) {
+      loadQuestion();
+    } else {
+      showResults();
+    }
+  };
+
+  // ─── SHOW RESULTS ────────────────────────────────────────────────────────────
+  function showResults() {
+    document.getElementById('quiz-main').style.display = 'none';
+    document.getElementById('result-card').style.display = 'block';
+
+    const pct = Math.round(score / shuffled.length * 100);
+    document.getElementById('result-score').textContent = score + '/' + shuffled.length;
+    document.getElementById('result-pct').textContent = pct + '% correct';
+
+    // Conditional chain for result message
+    let msg = '';
+    if (pct === 100) {
+      msg = 'Perfect score! You know your JS foundations cold. 🎉';
+    } else if (pct >= 70) {
+      msg = "Solid work! Review the ones you missed and you'll have it locked in.";
+    } else if (pct >= 40) {
+      msg = 'Good start. A few more passes and you\'ll get there.';
+    } else {
+      msg = 'Keep going — repetition is how this sticks. Try again!';
+    }
+    document.getElementById('result-msg').textContent = msg;
+
+    // Build review list with forEach
+    const reviewList = document.getElementById('review-list');
+    reviewList.innerHTML = '<p class="text-uppercase text-muted fw-semibold small mb-2">Review</p>';
+
+    userAnswers.forEach(function(a) {
+      const wasCorrect = a.chosen === a.correct;
+      const div = document.createElement('div');
+      div.className = 'border-top py-3';
+      div.innerHTML =
+        '<p class="fw-semibold text-dark small mb-1">' + a.q + '</p>' +
+        '<div class="d-flex justify-content-between align-items-start">' +
+          '<span class="small">' +
+            (wasCorrect
+              ? '<span class="text-success fw-semibold">✓ ' + a.options[a.correct] + '</span>'
+              : 'Your answer: <span class="text-danger fw-semibold">' + a.options[a.chosen] + '</span>' +
+                ' &nbsp;·&nbsp; Correct: <span class="text-success fw-semibold">' + a.options[a.correct] + '</span>'
+            ) +
+          '</span>' +
+          '<span class="badge bg-secondary bg-opacity-10 text-secondary ms-2">' + a.topic + '</span>' +
+        '</div>';
+      reviewList.appendChild(div);
+    });
+  }
+
+  // ─── RESTART ─────────────────────────────────────────────────────────────────
+  document.getElementById('restart-btn').onclick = function() {
+    currentIndex = 0;
+    score = 0;
+    answered = false;
+    userAnswers = [];
+    shuffled = shuffle([...questions]);
+    document.getElementById('result-card').style.display = 'none';
+    document.getElementById('quiz-main').style.display = 'block';
+    loadQuestion();
+  };
+
+  // ─── INIT ─────────────────────────────────────────────────────────────────────
+  shuffled = shuffle([...questions]);
+  loadQuestion();
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
