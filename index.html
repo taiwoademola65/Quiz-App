@@ -82,12 +82,12 @@
         if (quizData[i].num == currentQuestionIndex) {
           // console.log(quizData[i].question);
 
-          document.getElementById('choices-container').style.display = 'flex'
-          questionDisplay.innerText = `${quizData[i].question}`
-          option1Display.innerHTML = ` ${quizData[i].options[0]}`
-          option2Display.innerHTML = `${quizData[i].options[1]}`
-          option3Display.innerHTML = `${quizData[i].options[2]}`
-          option4Display.innerHTML = `${quizData[i].options[3]}`
+          document.getElementById('choices-container').style.display = 'flex';
+          questionDisplay.innerText = `${quizData[i].question}`;
+          option1Display.innerHTML = ` ${quizData[i].options[0]}`;
+          option2Display.innerHTML = `${quizData[i].options[1]}`;
+          option3Display.innerHTML = `${quizData[i].options[2]}`;
+          option4Display.innerHTML = `${quizData[i].options[3]}`;
           correctAnser = quizData[i].correct
           // console.log(document.getElementById('option1').innerHTML);
           // }
@@ -99,11 +99,8 @@
             document.getElementById('endBtn').style.display = 'block'
             document.getElementById('btn').style.display = 'none'
           }
-
         }
-
       }
-
     }
 
 
@@ -123,42 +120,39 @@
 
     const endBtn = () => {
       container = document.getElementById('container')
-      let htmlContent =`<h1 class="text-success"> Congratulations on completing the test. Your score is ${score}</h1> 
+      let htmlContent = `<h1 class="text-success"> Congratulations on completing the test. Your score is ${score}</h1> 
       <br>
 
-       <table class="table">
+    <table class="table">
           <tr>
             <th>S/N</th>
             <th>Question</th>
             <th>Correct Answer</th>
-          </tr>
-     
-      `
-
-      
-
-      for (let i = 0; i < quizData.length; i++) {
-        htmlContent += `         
-          <tr>
-            <td id="s/n" scope='row'>${quizData[i].num}</td>
-            <td id="showQuestion" scope='row'> ${quizData[i].question}</td>
-            <td id="showAnswer" scope='row'> ${quizData[i].correct}</td>
           </tr>`
 
-        // document.getElementById('s/n').innerText += `${i + 1}`
-        // document.getElementById('showQuestion').innerText += `${quizData[i].question}`
-        // document.getElementById('showAnswer').innerText += `${quizData[i].correct}`
 
-      }
+          quizData.map((quizQuestion)=>{
 
-  htmlContent += `
-    
-    </table>
-  `;
-
-  container.innerHTML = htmlContent;
+            htmlContent += `         
+              <tr>
+                <td id="s/n" scope='row'>${quizQuestion.num}</td>
+                <td id="showQuestion" scope='row'> ${quizQuestion.question}</td>
+                <td id="showAnswer" scope='row'> ${quizQuestion.correct}</td>
+              </tr>`
+          })
 
 
+      // for (let i = 0; i < quizData.length; i++)
+      //  {
+
+      //   // document.getElementById('s/n').innerText += `${i + 1}`
+      //   // document.getElementById('showQuestion').innerText += `${quizData[i].question}`
+      //   // document.getElementById('showAnswer').innerText += `${quizData[i].correct}`
+
+      // }
+      htmlContent += `</table>`;
+
+      container.innerHTML = htmlContent;
     }
 
 
